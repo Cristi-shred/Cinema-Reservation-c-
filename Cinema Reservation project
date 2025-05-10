@@ -2,31 +2,158 @@
 #include<vector>
 #include<string>
 #include<cstring>
+#include<fstream>
 using namespace std;
 
-struct Movies {
+struct Movies
+{
     string title;
     double price;
 };
 
-void displaymovies(vector<Movies>& movies) {
-    cout << "Now at the cinema :\n";
-    for (int i = 0;i < movies.size();i++) {
+void displaymovies(vector<Movies>& movies)
+{
+    cout << "Now at the cinema : " << endl;
+    for (int i = 0; i < movies.size(); i++)
+    {
         cout << movies[i].title << " " << movies[i].price << endl;
     }
 }
 
-void priceoptions(vector<string> pricing) {
-    pricing = { "1.Student ","2.Adult ","3.Children " };
-    for (int i = 0;i < pricing.size();i++) {
+void priceoptions(vector<string> pricing)
+{
+    pricing = { "1.Student ","2.Adult ","3.Child " };
+    for (int i = 0; i < pricing.size(); i++)
+    {
         cout << pricing[i] << endl;
+    }
+}
+
+void printtickets(const string& movieTitle, int category, int ticketCount, double totalPrice) {
+    ofstream f("tickets.txt", ios::app);
+    if (!f) {
+        cout << "File could not be opened!" << endl;
+    }
+    else {
+        f << "Movie: " << movieTitle << "\n";
+        f << "Category: ";
+        switch (category) {
+        case 1: f << "Student\n"; break;
+        case 2: f << "Adult\n"; break;
+        case 3: f << "Child\n"; break;
+        }
+        f << "Tickets: " << ticketCount << "\n";
+        f << "Total Price: $" << totalPrice << "\n";
+        f << "------------------------\n";
+        cout << "Tickets have been printed to tickets.txt\n";
+    }
+}
+
+void display(vector<Movies> movies, int number = 0)
+{
+    vector<string> pricing;
+    bool value = true, value2 = true;
+    int number2 = 0;
+    double tickets = 0, finalprice = 0, interimprice = 0, newprice = 0;
+    string cont;
+    cout << "You have selected " << movies[number - 1].title << endl;
+    cout << "Choose a category : " << endl;
+    priceoptions(pricing);
+    cin >> number2;
+    while (value2)
+    {
+        switch (number2)
+        {
+        case 1:
+        {
+            newprice = movies[number - 1].price * 0.75;
+            cout << "The student price is " << newprice << endl;
+            cout << "How many tickets would you like to buy ? " << endl;
+            cin >> tickets;
+            interimprice = tickets * newprice;
+            finalprice += interimprice;
+            cout << "Do you want to buy tickets for another category ?" << endl;
+            cin >> cont;
+            if (cont == "yes")
+            {
+                cout << "Select the other option(s) : " << endl;
+                cin >> number2;
+                continue;
+            }
+            else if (cont == "no")
+            {
+                cout << "The total price is : " << finalprice;
+                printtickets(movies[number - 1].title, number2, tickets, finalprice);
+                value2 = false;
+                value = false;
+                break;
+            }
+            value2 = false;
+            break;
+        }
+        case 2:
+        {
+            newprice = movies[number - 1].price * 1;
+            cout << "The adult price is " << newprice << endl;
+            cout << "How many tickets would you like to buy ? " << endl;
+            cin >> tickets;
+            interimprice = tickets * newprice;
+            finalprice += interimprice;
+            cout << "Do you want to buy tickets for another category ?" << endl;
+            cin >> cont;
+            if (cont == "yes")
+            {
+                cout << "Select the other option(s) : " << endl;
+                cin >> number2;
+                continue;
+            }
+            else if (cont == "no")
+            {
+                cout << "The total price is : " << finalprice;
+                printtickets(movies[number - 1].title, number2, tickets, finalprice);
+                value2 = false;
+                value = false;
+                break;
+            }
+            value2 = false;
+            break;
+        }
+        case 3:
+        {
+            newprice = movies[number - 1].price * 0.5;
+            cout << "The child price is " << newprice << endl;
+            cout << "How many tickets would you like to buy ? " << endl;
+            cin >> tickets;
+            interimprice = tickets * newprice;
+            finalprice += interimprice;
+            cout << "Do you want to buy tickets for another category ?" << endl;
+            cin >> cont;
+            if (cont == "yes")
+            {
+                cout << "Select the other option(s) : " << endl;
+                cin >> number2;
+                continue;
+            }
+            else if (cont == "no")
+            {
+                cout << "The total price is : " << finalprice;
+                printtickets(movies[number - 1].title, number2, tickets, finalprice);
+                value2 = false;
+                value = false;
+                break;
+            }
+            value2 = false;
+            break;
+        }
+        }
     }
 }
 
 int main()
 {
     vector<string> pricing;
-    vector<Movies> movies = {
+    vector<Movies> movies =
+    {
         {"1.Avengers : Endgame", 14.99},
         {"2.Dune",12.99},
         {"3.Interstellar",14.99},
@@ -34,1286 +161,45 @@ int main()
         {"5.Green Book",10.99}
     };
     displaymovies(movies);
-    cout << "\n";
-    int number = 0, number2 = 0;
-    string watch, cont;
-    double tickets = 0, finalprice = 0, interimprice = 0;
-    bool value = true, value2 = true;
-    cout << "Select the movie number " << endl;
-    while (value) {
+    bool value = true;
+    int number = 0;
+    cout << "Select movie : " << endl;
+    while (value)
+    {
         cin >> number;
-        switch (number) {
+        switch (number)
+        {
         case 1:
         {
-            cout << "You have selected Avengers : Endgame" << endl;
-            cout << "Choose the option that fits you" << endl;
-            priceoptions(pricing);
-            cin >> number2;
-            switch (number2) {
-            case 1:
-            {
-                double newprice = movies[number - 1].price * 0.75;
-                cout << "The price for students is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 2:
-            {
-                double newprice = movies[number - 1].price * 1;
-                cout << "The price for adults is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 3:
-            {
-                double newprice = movies[number - 1].price * 0.5;
-                cout << "The price for children is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            }
+            display(movies, number);
             value = false;
             break;
         }
         case 2:
         {
-            cout << "You have selected Dune" << endl;
-            cout << "Choose the option that fits you" << endl;
-            priceoptions(pricing);
-            cin >> number2;
-            switch (number2) {
-            case 1:
-            {
-                double newprice = movies[number - 1].price * 0.75;
-                cout << "The price for students is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 2:
-            {
-                double newprice = movies[number - 1].price * 1;
-                cout << "The price for adults is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 3:
-            {
-                double newprice = movies[number - 1].price * 0.5;
-                cout << "The price for children is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            }
+            display(movies, number);
             value = false;
             break;
         }
         case 3:
         {
-            cout << "You have selected Interstellar" << endl;
-            cout << "Choose the option that fits you" << endl;
-            priceoptions(pricing);
-            cin >> number2;
-            switch (number2) {
-            case 1:
-            {
-                double newprice = movies[number - 1].price * 0.75;
-                cout << "The price for students is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 2:
-            {
-                double newprice = movies[number - 1].price * 1;
-                cout << "The price for adults is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 3:
-            {
-                double newprice = movies[number - 1].price * 0.5;
-                cout << "The price for children is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            }
+            display(movies, number);
             value = false;
             break;
         }
         case 4:
         {
-            cout << "You have selected The Batman" << endl;
-            cout << "Choose the option that fits you" << endl;
-            priceoptions(pricing);
-            cin >> number2;
-            switch (number2) {
-            case 1:
-            {
-                double newprice = movies[number - 1].price * 0.75;
-                cout << "The price for students is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 2:
-            {
-                double newprice = movies[number - 1].price * 1;
-                cout << "The price for adults is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 3:
-            {
-                double newprice = movies[number - 1].price * 0.5;
-                cout << "The price for children is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            }
+            display(movies, number);
             value = false;
             break;
         }
         case 5:
         {
-            cout << "You have selected Green Book" << endl;
-            cout << "Choose the option that fits you" << endl;
-            priceoptions(pricing);
-            cin >> number2;
-            switch (number2) {
-            case 1:
-            {
-                double newprice = movies[number - 1].price * 0.75;
-                cout << "The price for students is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 2:
-            {
-                double newprice = movies[number - 1].price * 1;
-                cout << "The price for adults is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            case 3:
-            {
-                double newprice = movies[number - 1].price * 0.5;
-                cout << "The price for children is : " << newprice << endl;
-                cout << "How many tickets do you want to buy ?" << endl;
-                cin >> tickets;
-                interimprice = tickets * newprice;
-                finalprice += interimprice;
-                cout << "Do you want to buy tickets for another category?" << endl;
-                cin >> cont;
-                if (cont == "yes") {
-                    while (value2) {
-                        cout << "Choose the option that fits you" << endl;
-                        cin >> number2;
-                        switch (number2) {
-                        case 1:
-                        {
-                            double newprice = movies[number - 1].price * 0.75;
-                            cout << "The price for students is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 2:
-                        {
-                            double newprice = movies[number - 1].price * 1;
-                            cout << "The price for adults is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-                        case 3:
-                        {
-                            double newprice = movies[number - 1].price * 0.5;
-                            cout << "The price for children is : " << newprice << endl;
-                            cout << "How many tickets do you want to buy ?" << endl;
-                            cin >> tickets;
-                            interimprice = tickets * newprice;
-                            finalprice += interimprice;
-                            cout << "Do you want to buy tickets for another category?" << endl;
-                            cin >> cont;
-                            if (cont == "yes")continue;
-                            else if (cont == "no") {
-                                cout << "Amount to be paid : " << finalprice;
-                                value2 = false;
-                                value = false;
-                            }
-                            break;
-                        }
-
-                        }
-                    }
-                }
-                else if (cont == "no") {
-                    cout << "Amount to be paid : " << finalprice;
-                    value = false;
-                    break;
-                }
-                value = false;
-                break;
-            }
-            }
+            display(movies, number);
             value = false;
             break;
         }
         }
     }
     return 0;
-};
+}
